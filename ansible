@@ -1,0 +1,30 @@
+
+#it will use the JRE API to run the application together with a pre-installation of JDK JAVA
+##it will create a directory to make an environment in which the applications will run simultaneously by the owner : with specific rights "0700" 
+###the third part is to copy the artifact movieapi.jar in the directory appli_dir so as to make it run simultaneously
+####it will copy the application "application properties" which is a java application in a directory "application properties" created in appli_dir previously to make it run with other applications
+---
+- name: JRE Open JDK
+  apt:
+    name: openjdk-11-jre
+    state: present
+  become: yes
+
+- name: Create Directory
+  file:
+    path: "{{ appli_dir }}"
+    state: directory
+    owner: "{{ owner_user }}"
+    group: "{{ owner_group }}"
+    mode: 0700
+  become: yes
+
+- name: Copy artifact
+  copy:
+    src: movieapi.jar
+    dest: "{{ appli_dir }}"
+
+- name: Copy conf api
+  template:
+    src: application.properties.j2
+    dest: "{{ appli_dir }}/application.properties"
